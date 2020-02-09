@@ -1,0 +1,6 @@
+pdf/
+md/
+html/
+json/
+__pycache__/
+*.csv
