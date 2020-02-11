@@ -19,7 +19,7 @@ def html_to_dict(string):
     recipe = {}
     recipe['title'] = soup.find("h1").string
     try:
-        recipe['text'] = soup.select("h1 + p")[0].string
+        recipe['text'] = soup.select("h1 + p")[0].string.strip()
     except IndexError:
         recipe['text'] = None
     try:
