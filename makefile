@@ -16,11 +16,17 @@ md/%.md: json/%
 pdf/%.pdf: md/%.md
 	pandoc --pdf-engine=xelatex $< -o $@
 
-metadata.csv: $(json_targets)
-	./metadata.py $(json_targets) -o $@
+data/metadata.csv: $(json_targets)
+	./metadata.py json -o $@
 
-ingredients.csv: $(json_targets)
-	./metadata.py $(json_targets) -i $@
+data/ingredients.csv: $(json_targets)
+	./metadata.py json -i $@
+
+data/comments.csv: $(json_targets)
+	./metadata.py json -m $@
+
+data/categories.csv: $(json_targets)
+	./metadata.py json -c $@
 
 .PHONY: json pdf md
 json: $(json_targets)
@@ -28,5 +34,5 @@ json: $(json_targets)
 md: $(md_targets)
 
 pdf: $(pdf_targets)
-
-all: json metadata.csv ingredients.csv
+	
+all: json data/metadata.csv data/ingredients.csv data/comments.csv data/categories.csv
