@@ -19,7 +19,7 @@ def main():
     """Main function"""
     parser = argparse.ArgumentParser(description="Get random recipes from the internet")
     parser.add_argument("-n", "--number", type=int, nargs="?", default=1,
-                        help="How many recipes to get")
+                        help="How many recipes to get.")
     parser.add_argument("-e", "--endpoint", type=str, nargs="?", default=RECIPE_ENDPOINT,
                         help="Where to get recipes from")
     parser.add_argument("-f", "--failtime", type=int, nargs="?", default=FAIL_SLEEP_TIME,
@@ -60,10 +60,14 @@ def main():
             continue
         file_name = f"{args.out}{os.path.sep}{file_name}"
         open_action = open if args.plain else gzip.open
-        with open_action(file_name, "wt") as connection:
-            connection.write(response.text)
-            print(f"writing to '{file_name}'")
-        recipes += 1
+        try:
+            with open_action(file_name, "wt") as connection:
+                connection.write(response.text)
+                print(f"writing to '{file_name}'", end=' ')
+            recipes += 1
+        except OSError as error:
+            print(f"Something went wrong writing file: {error}")
+        print("\n", end='')
 
 if __name__ == '__main__':
     main()
