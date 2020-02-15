@@ -16,20 +16,24 @@ FAIL_SLEEP_TIME = 300
 DEFAULT_TIMEOUT = 3
 
 def main():
-    """Main function"""
-    parser = argparse.ArgumentParser(description="Get random recipes from the internet")
+    """Main function. Handle arguments, contains main loop."""
+    # Consider moving getting loop to different function.
+    parser = argparse.ArgumentParser(
+        description="Get random recipes from the internet. Unless otherwise\
+        specified, recipes are stored as gzip compressed html."
+    )
     parser.add_argument("-n", "--number", type=int, nargs="?", default=1,
-                        help="How many recipes to get.")
+                        help=f"How many recipes to get. Default 1")
     parser.add_argument("-e", "--endpoint", type=str, nargs="?", default=RECIPE_ENDPOINT,
-                        help="Where to get recipes from")
+                        help=f"Where to get recipes from. Default '{RECIPE_ENDPOINT}'.")
     parser.add_argument("-f", "--failtime", type=int, nargs="?", default=FAIL_SLEEP_TIME,
-                        help="How much time to sleep on failure")
+                        help=f"How much time to sleep on failure. Default {FAIL_SLEEP_TIME}s.")
     parser.add_argument("-t", "--time", type=int, nargs="?", default=SLEEP_TIME,
-                        help="How much time to sleep between requests")
+                        help=f"How much time to sleep between requests. Default {SLEEP_TIME}s.")
     parser.add_argument('-i', '--timeout', type=float, nargs="?", default=DEFAULT_TIMEOUT,
-                        help="Timout value for requests")
+                        help=f"Timout value for requests. Default {DEFAULT_TIMEOUT}s.")
     parser.add_argument("-o", "--out", type=str, nargs="?", default=OUT_DIR,
-                        help="where to store recipes")
+                        help=f"Storage direcotory for recipes. Default {OUT_DIR}.")
     parser.add_argument("-p", "--plain", action="store_true", default=False,
                         help="Don't compress recipe")
     args = parser.parse_args()
