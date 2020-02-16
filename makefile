@@ -1,7 +1,7 @@
 parser=./parse_recipe.py
 typer=./set_recipe.py
 
-html_files:=$(shell find html -type f)
+html_files:=$(shell find -L html -type f)
 
 json_targets:=$(html_files:html/%=json/%)
 md_targets:=$(html_files:html/%=md/%.md)
