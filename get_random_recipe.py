@@ -36,8 +36,13 @@ def main():
                         help=f"Storage direcotory for recipes. Default {OUT_DIR}.")
     parser.add_argument("-p", "--plain", action="store_true", default=False,
                         help="Don't compress recipe")
+    parser.add_argument('-r', "--population", action='store_true', default=False,
+                        help="Estimate population size")
     args = parser.parse_args()
     recipes = 1
+    if args.population:
+        existing = len(os.listdir(args.out))
+        seen = 0
     while recipes <= args.number:
         if recipes > 1:
             time.sleep(args.time)
@@ -60,7 +65,12 @@ def main():
         url_id = base64.urlsafe_b64encode(response.url.encode("utf-8")).decode("utf-8")
         file_name = f"{url_id}"
         if file_name in os.listdir(args.out):
-            print(f"which already exists. Skipping")
+            print(f"which already exists. Skipping.", end=' ')
+            if args.population:
+                seen += 1
+                population = (existing+recipes)/(seen/recipes)
+                print(f"This puts population estimate at {population}", end='')
+            print('', end='\n')
             continue
         file_name = f"{args.out}{os.path.sep}{file_name}"
         open_action = open if args.plain else gzip.open
@@ -69,6 +79,8 @@ def main():
                 connection.write(response.text)
                 print(f"writing to '{file_name}'", end=' ')
             recipes += 1
+            if args.population:
+                seen += 1
         except OSError as error:
             print(f"Something went wrong writing file: {error}")
         print("\n", end='')
