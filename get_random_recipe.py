@@ -68,7 +68,7 @@ def main():
             print(f"which already exists. Skipping.", end=' ')
             if args.population:
                 seen += 1
-                population = (existing+recipes)/(seen/recipes)
+                population = int((existing+recipes)/(seen/recipes))
                 print(f"This puts population estimate at {population}", end='')
             print('', end='\n')
             continue
@@ -79,8 +79,6 @@ def main():
                 connection.write(response.text)
                 print(f"writing to '{file_name}'", end=' ')
             recipes += 1
-            if args.population:
-                seen += 1
         except OSError as error:
             print(f"Something went wrong writing file: {error}")
         print("\n", end='')
