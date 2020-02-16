@@ -15,37 +15,40 @@ def get_ingredients(entry):
     ingredients = entry['ingredients']
     ingredient = [ingredient[0] for ingredient in ingredients]
     quantity = [' '.join(ingredient[1]) for ingredient in ingredients]
-    base = {'ingredient': ingredient, 'quantity': quantity}
-    meta = {key: entry[key]
-            for key in entry
-            if key not in ['instructions', 'comments', 'ingredients', 'categories']}
-    base.update(meta)
+    base = {'filename': entry['filename'], 'ingredient': ingredient, 'quantity': quantity}
+    #meta = {key: entry[key]
+    #        for key in entry
+    #        if key not in ['instructions', 'comments', 'ingredients', 'categories']}
+    #base.update(meta)
     return pd.DataFrame(base)
 
 def get_comments(entry):
     """Gets dataframe of ingredients for recipe"""
     comments = entry['comments']
-    base = {}
+    if comments:
+        base = {'filename': entry['filename']}
+    else:
+        base = {}
     for comment in comments:
         for key in comment:
             if key not in base:
                 base[f"comment_{key}"] = []
             base[f"comment_{key}"].append(comment[key])
     # need to turn a list of dicts into a dict of lists
-    meta = {key: entry[key]
-            for key in entry
-            if key not in ['instructions', 'comments', 'ingredients', 'categories']}
-    base.update(meta)
-    return pd.DataFrame(comments)
+    #meta = {key: entry[key]
+    #        for key in entry
+    #        if key not in ['instructions', 'comments', 'ingredients', 'categories']}
+    #base.update(meta)
+    return pd.DataFrame(base)
 
 def get_categories(entry):
     """Gets dataframe of ingredients for recipe"""
     categories = entry['categories']
-    base = {'category': categories}
-    meta = {key: entry[key]
-            for key in entry
-            if key not in ['instructions', 'comments', 'ingredients', 'categories']}
-    base.update(meta)
+    base = {'category': categories, 'filename': entry['filename']}
+    #meta = {key: entry[key]
+    #        for key in entry
+    #        if key not in ['instructions', 'comments', 'ingredients', 'categories']}
+    #base.update(meta)
     return pd.DataFrame(base)
 
 def get_ingredient_matrix(entries, numeric=False):
@@ -80,24 +83,24 @@ def main():
     inputs = [f"{args.input[0]}{os.path.sep}{i}" for i in os.listdir(args.input[0])]
     data = map(recipes.read_recipe, inputs)
     data = list(data)
-    if 'output' in args:
+    if args.output:
         outdata = pd.DataFrame(data)
         outdata.drop(["categories", "comments", "ingredients"],
                      axis=1).to_csv(args.output, index=False)
-    if 'ingredients' in args:
+    if args.ingredients:
         # get ingredients and put into file
         ingredients = map(get_ingredients, data)
         dataframes = map(pd.DataFrame, ingredients)
         pd.concat(dataframes).to_csv(args.ingredients, index=False)
-    if 'categories' in args:
+    if args.categories:
         categories = map(get_categories, data)
         dataframes = map(pd.DataFrame, categories)
         pd.concat(dataframes).to_csv(args.categories, index=False)
-    if 'comments' in args:
+    if args.comments:
         comments = map(get_comments, data)
         dataframes = map(pd.DataFrame, comments)
         pd.concat(dataframes).to_csv(args.comments, index=False)
-    if 'matrix' in args:
+    if args.matrix:
         ingredients = map(get_ingredients, data)
         dataframes = map(pd.DataFrame, ingredients)
         mat = get_ingredient_matrix(pd.concat(dataframes))
